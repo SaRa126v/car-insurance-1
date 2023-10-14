@@ -70,8 +70,8 @@ function calculatePrice(info) {
   // + Calculate year diffrence
   const diffrence = yearDiffrence(year);
 
-  // 3% cheaper for each year
-  price = price - ((diffrence * 3) / 100) * price;
+    // + Calculate the price based on the car age of user
+  price = getsCheaper(price, diffrence);
 
   // + Calculate the price based on the level chosen by user
   price = calLevel(info.level, price);
@@ -117,23 +117,36 @@ function calLevel(chosenLevel, price) {
   }
 }
 
+// calculate the price based on the car age..............
+
+function getsCheaper(price, diffrence) {
+  // 3% cheaper for each year
+  price = price - ((diffrence * 3) / 100) * price;
+  return price;
+}
+
 // User Interface (UI) Functions..........................
 
 // Display message box....................................
 
 function displayMsg(msg) {
   // create message box
-  const messageBox = document.createElement("div");
-  messageBox.classList = "error";
-  messageBox.innerText = msg;
-
-  // show message
+ const messageBox = errorMsgMaker(msg)
+  // show message in dom
   form.insertBefore(messageBox, document.querySelector(".form-group"));
 
-  // remove message box
+  // remove message box after some sec
   setTimeout(() => {
     document.querySelector(".error").remove();
   }, 5000);
+}
+
+// create message box for error ..........................
+function errorMsgMaker(msg) {
+  const messageBox = document.createElement("div");
+  messageBox.classList = "error";
+  messageBox.innerText = msg;
+return messageBox;
 }
 
 // get the current year.................................
