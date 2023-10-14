@@ -1,15 +1,33 @@
-// Variables
+// Variables.............................................
+
 const form = document.querySelector("#request-quote");
 
-// Events
+// information storage...................................
+
+// we can change our config here without having to search for them
+const config = {
+  price: 0,
+  basePrice: 2000000,
+  make1: 1.15,
+  make2: 1.3,
+  make3: 1.8,
+  // 30%
+  basic: 1.3,
+  // 50%
+  complete: 1.5,
+};
+// Events................................................
+
 document.addEventListener("DOMContentLoaded", afterLoad);
 document.addEventListener("submit", submitForm);
 
-// Functions
+// Functions..............................................
 function afterLoad() {
-  displayYears();
+  // get the current year and fix it
+  fixNumbers(currentYearr());
 }
-// submit form
+// submit form...........................................
+
 function submitForm(e) {
   e.preventDefault();
 
@@ -36,45 +54,72 @@ function submitForm(e) {
   }
 }
 
+// price calculation ....................................
+
 function calculatePrice(info) {
-  let price = 0,
-    base = 2000000;
+  // variables
+  let price = config.price;
 
-  // + Calculate Make
-  /* 
-    make:1      =>      1.15
-    make:2      =>      1.30
-    make:3      =>      1.80
-    */
-  const make = info.make;
-  switch (make) {
-    case "1":
-      price = base * 1.15;
-      break;
-    case "2":
-      price = base * 1.3;
-      break;
-    case "3":
-      price = base * 1.8;
-      break;
-  }
+  // + Calculate the price based on the Make chosen by user
+  price = calMake(info.make, price);
 
-  // + Calculate Year chosen by user
+  // + Calculate the price based on the Year chosen by user
   const year = fixNumbers(info.year);
 
-    // + Calculate year diffrence 
-    const diffrence = yearDiffrence(year);
-
-console.log(year);
-console.log(diffrence);
+  // + Calculate year diffrence
+  const diffrence = yearDiffrence(year);
 
   // 3% cheaper for each year
   price = price - ((diffrence * 3) / 100) * price;
+
+  // + Calculate the price based on the level chosen by user
+  price = calLevel(info.level, price);
 }
 
+// year diffrence.........................................
 
-// User Interface (UI) Functions
-// Display message box
+function yearDiffrence(year) {
+  const max = currentYearr();
+  const diffrence = max - year;
+  return diffrence;
+}
+
+// get the price based on the chosen make ...............
+
+function calMake(chosenMake, price) {
+  // variables
+  const make = chosenMake;
+  const basePrice = config.basePrice;
+  const make1 = config.make1;
+  const make2 = config.make2;
+  const make3 = config.make3;
+
+  switch (make) {
+    case "1":
+      return (price = basePrice * make1);
+    case "2":
+      return (price = basePrice * make2);
+    case "3":
+      return (price = basePrice * make3);
+  }
+}
+
+// calculate the price based on the chosen level.........
+
+function calLevel(chosenLevel, price) {
+  const basic = config.basic;
+  const complete = config.complete;
+  if (chosenLevel == "basic") {
+    return (price = price * basic);
+  } else {
+    return (price = price * complete);
+  }
+}
+
+// User Interface (UI) Functions..........................
+
+// Display message box....................................
+
 function displayMsg(msg) {
   // create message box
   const messageBox = document.createElement("div");
@@ -90,15 +135,8 @@ function displayMsg(msg) {
   }, 5000);
 }
 
-// Show Years
-function displayYears() {
-  // get now years
-  const currentYear = currentYearr();
-// fix numbers
-  fixNumbers (currentYear);
-}
+// get the current year.................................
 
-// get now year.......................................
 function currentYearr() {
   let curentYear = new Date().toLocaleDateString("fa-IR");
 
@@ -112,12 +150,11 @@ function currentYearr() {
   return maxYear;
 }
 
+// convert strings to eng................................
 
-
-// current year to eng
-function fixNumbers (fixed) {
-    // Convert to number
-    let persianNumbers = [
+function fixNumbers(fixed) {
+  // Convert to number
+  let persianNumbers = [
       /۰/g,
       /۱/g,
       /۲/g,
@@ -143,50 +180,40 @@ function fixNumbers (fixed) {
     ];
   if (typeof fixed === "string") {
     for (var i = 0; i < 10; i++) {
-      fixed = fixed
-        .replace(persianNumbers[i], i)
-        .replace(arabicNumbers[i], i);
+      fixed = fixed.replace(persianNumbers[i], i).replace(arabicNumbers[i], i);
     }
   }
 
-  const fixedYear = parseInt(fixed);
-
-
-  return fixedYear;
-};
-
-
+  return parseInt(fixed);
+}
 
 // previous years.........................................
-function preYears(maxYear) {
-    // get min year
-    let minYear = maxYear - 20;
+// show previous years based on the current year
 
-    // access to the select tag
-    const selectYear = document.querySelector("#year");
-  
-    // create first option tag for title
-    // create option tag
-    const optionTag = document.createElement("option");
-    optionTag.innerText = `- انتخاب -`;
-    // optionTag.value = ''
-    // append option to the selectYear
-    selectYear.appendChild(optionTag);
-  
-    // create for loop for making option tag
-    for (let i = maxYear; i >= minYear; i--) {
-      // create option tag
-      const optionTag = document.createElement("option");
-      optionTag.value = i;
-      optionTag.innerText = `سال ${i}`;
-  
-      // append option to the selectYear
-      selectYear.appendChild(optionTag);
-    }
+function preYears(maxYear) {
+  // get min year
+  let minYear = maxYear - 20;
+
+  // create first option tag for title
+  optionMaker("", `- انتخاب -`);
+
+  // create a for loop for making all the option tags
+  for (let i = maxYear; i >= minYear; i--) {
+    optionMaker(i, `سال ${i}`);
+  }
 }
-// year diffrence.........................................
-function yearDiffrence(year) {
-  const max = currentYearr();
-  const diffrence = max - year;
-  return diffrence;
+
+// make option tags based on the given value & text....
+
+function optionMaker(optValue, optText) {
+  // access to the select tag
+  const yearSelectTag = document.querySelector("#year");
+
+  // create option tag
+  const optionTag = document.createElement("option");
+  optionTag.value = optValue;
+  optionTag.innerText = optText;
+
+  // append option to the selectYear
+  yearSelectTag.appendChild(optionTag);
 }
