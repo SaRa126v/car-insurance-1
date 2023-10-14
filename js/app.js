@@ -206,6 +206,7 @@ function preYears(maxYear, numYear) {
 }
 
 // make option tags based on the given value & text....
+// options for select tag year 
 
 function optionMaker(optValue, optText) {
   // access to the select tag
