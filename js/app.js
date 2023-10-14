@@ -15,6 +15,7 @@ const config = {
   basic: 1.3,
   // 50%
   complete: 1.5,
+  yearsNumber: 20,
 };
 // Events................................................
 
@@ -190,9 +191,10 @@ function fixNumbers(fixed) {
 // previous years.........................................
 // show previous years based on the current year
 
-function preYears(maxYear) {
+function preYears(maxYear, numYear) {
+   numYear = config.yearsNumber;
   // get min year
-  let minYear = maxYear - 20;
+  let minYear = maxYear - numYear;
 
   // create first option tag for title
   optionMaker("", `- انتخاب -`);
