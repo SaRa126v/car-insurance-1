@@ -193,8 +193,11 @@ class Process {
     price = this.calMake(this.make, price);
 
     console.log(this.make);
+    console.log(make);
     // + Calculate the price based on the Year chosen by user
     const year = new Interface().fixNumbers(this.year);
+
+console.log(year);
 
     // + Calculate year diffrence
     const diffrence = this.yearDiffrence(year);
@@ -235,15 +238,21 @@ class Process {
          price = basePrice * make1;
          console.log(price);
          console.log(make1);
+         
+         break;
       case "2":
          price = basePrice * make2;
          console.log(price);
          console.log(make2);
+break;
       case "3":
         price = basePrice * make3;
          console.log(price);
          console.log(make3);
+         break;
     }
+
+    return price;
   }
 
   // calculate the price based on the chosen level.........
@@ -319,13 +328,11 @@ function submitForm(e) {
       level: level,
     };
 
-console.log(info.make);
-
-    new Process(info.make, info.year, info.level);
+const Saber = new Process(info.make, info.year, info.level)
 
     // loading.............................................
     // wait for some time then call this function
     // cannot be used in oop
-    domm.showResult(info, new Process().calculatePrice());
+    domm.showResult(info, Saber.calculatePrice());
   }
 }
